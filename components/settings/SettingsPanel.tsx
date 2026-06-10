@@ -98,7 +98,7 @@ export default function SettingsPanel() {
 
       {/* ── WEIGHT EXPENSE ───────────────────────────────────── */}
       <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
-        <SH title="Weight Expense Ranges" desc="Industrial cost added per unit based on product net weight (USD)"
+        <SH title="Weight Expense Ranges 1" desc="Industrial cost added per unit based on product net weight (USD)"
           right={
             <button className="btn btn-primary" onClick={addRange} style={{ height: 28, fontSize: 11 }}>
               <Plus size={12} /> Add Range
