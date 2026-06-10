@@ -96,7 +96,7 @@ export default function Sidebar() {
       </div>
 
       <div className="sidebar-footer">
-        <div className="avatar">YA</div>
+        <div className="avatar">AY</div>
         <div style={{ flex: 1 }}>
           <div className="footer-name">Younis</div>
           <div className="footer-role">Admin · Costing</div>
