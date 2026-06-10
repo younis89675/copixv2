@@ -1,6 +1,6 @@
 'use client'
 import { useCallback, useState } from 'react'
-import { Upload, CheckCircle, AlertCircle, FileSpreadsheet, RefreshCw, Cloud } from 'lucide-react'
+import { Upload, CheckCircle, AlertCircle, FileSpreadsheet, RefreshCw, Cloud, Info } from 'lucide-react'
 import { parseProductFile, parseBOMFile, parsePriceFile } from '@/lib/excelParser'
 import { computeProducts } from '@/lib/costingEngine'
 import { useAppStore } from '@/store/appStore'
@@ -14,11 +14,18 @@ const FILE_CONFIGS: { key: FileKey; label: string; desc: string; color: string }
 ]
 
 export default function FileUpload() {
-  const { settings, setRawData, setComputedProducts, reset, pushToCloud } = useAppStore()
-  const [files, setFiles] = useState<Record<FileKey, File | null>>({ product: null, bom: null, price: null })
+  // ── Never destructure settings here — always read fresh via getState() ──
+  const { setRawData, setComputedProducts, reset, pushToCloud } = useAppStore()
+
+  // Only for display in the UI hint
+  const discountCount = useAppStore(s => s.settings.categoryDiscounts.length)
+  const weightRanges  = useAppStore(s => s.settings.weightExpenseRanges.length)
+
+  const [files, setFiles]   = useState<Record<FileKey, File | null>>({ product: null, bom: null, price: null })
   const [status, setStatus] = useState<'idle' | 'processing' | 'done' | 'error'>('idle')
-  const [error, setError] = useState('')
+  const [error, setError]   = useState('')
   const [progress, setProgress] = useState('')
+  const [stats, setStats]   = useState<{ products: number; discountsApplied: number } | null>(null)
 
   const onDrop = useCallback((key: FileKey, file: File) => {
     setFiles(f => ({ ...f, [key]: file }))
@@ -31,6 +38,8 @@ export default function FileUpload() {
     if (!allLoaded) return
     setStatus('processing')
     setError('')
+    setStats(null)
+
     try {
       setProgress('Reading Excel files…')
       const [pb, bb, prb] = await Promise.all([
@@ -38,15 +47,23 @@ export default function FileUpload() {
         files.bom!.arrayBuffer(),
         files.price!.arrayBuffer(),
       ])
+
       setProgress('Parsing data…')
       const products = parseProductFile(pb)
       const bom      = parseBOMFile(bb)
       const prices   = parsePriceFile(prb)
 
-      setProgress(`Computing costs for ${products.length} products…`)
+      // ✅ Read settings FRESH from store at compute time — never from closure
+      const currentSettings = useAppStore.getState().settings
+      const appliedDiscounts = currentSettings.categoryDiscounts.length
+
+      setProgress(`Computing costs for ${products.length} products (${appliedDiscounts} category discounts)…`)
+
       setRawData(products, bom, prices)
-      const computed = computeProducts(products, bom, prices, settings)
+      const computed = computeProducts(products, bom, prices, currentSettings)
       setComputedProducts(computed)
+
+      setStats({ products: computed.length, discountsApplied: appliedDiscounts })
 
       setProgress('Syncing to cloud…')
       await pushToCloud()
@@ -62,6 +79,16 @@ export default function FileUpload() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+      {/* Settings snapshot info */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: 'var(--accent-bg)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 11, color: 'var(--accent)' }}>
+        <Info size={13} style={{ flexShrink: 0 }} />
+        <span>
+          Current settings: <strong>{discountCount} category discounts</strong> · <strong>{weightRanges} weight ranges</strong> will be applied on processing.
+          {discountCount === 0 && <span style={{ color: 'var(--amber)', marginLeft: 6 }}>⚠ No discounts configured — go to Settings first if needed.</span>}
+        </span>
+      </div>
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
         {FILE_CONFIGS.map(({ key, label, desc, color }) => (
           <DropZone key={key} label={label} desc={desc} color={color}
@@ -69,7 +96,7 @@ export default function FileUpload() {
         ))}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
         <button
           className="btn btn-primary"
           onClick={handleProcess}
@@ -80,13 +107,18 @@ export default function FileUpload() {
             : <><Upload size={13} /> Process & Calculate</>}
         </button>
 
-        {status === 'done' && (
+        {status === 'done' && stats && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--green)', fontWeight: 500 }}>
             <CheckCircle size={14} />
-            <span>Done! Data pushed to cloud — teammates will see it on refresh.</span>
+            <span>
+              Done! {stats.products} products computed
+              {stats.discountsApplied > 0 && <span> · {stats.discountsApplied} discounts applied</span>}
+              {stats.discountsApplied === 0 && <span style={{ color: 'var(--amber)' }}> · no discounts applied (0 configured)</span>}
+            </span>
             <Cloud size={13} />
           </div>
         )}
+
         {status === 'error' && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--red)' }}>
             <AlertCircle size={14} /> {error}
