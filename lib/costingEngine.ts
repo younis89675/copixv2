@@ -3,7 +3,20 @@ import type {
   ComputedProduct, CostBreakdown, BOMTreeNode, ItemType
 } from '@/types'
 
-const DEFAULT_SETTINGS: AppSettings = {
+// تعريف واجهة مجموعة الخصم لتتوافق مع الـ Frontend الجديد
+interface DiscountGroup {
+  id: string
+  name: string
+  discountValue: number
+  productCodes: string[]
+}
+
+// توسيع واجهة الـ AppSettings محلياً لتقرأ الحقل الجديد بأمان
+type MappedAppSettings = AppSettings & {
+  discountGroups?: DiscountGroup[]
+}
+
+const DEFAULT_SETTINGS: MappedAppSettings = {
   exchangeRateLYD: 5.5,
   insuranceRate: 0.10,
   weightExpenseRanges: [
@@ -15,6 +28,7 @@ const DEFAULT_SETTINGS: AppSettings = {
     { minWeight: 30,   maxWeight: 9999, expense: 0.70 },
   ],
   categoryDiscounts: [],
+  discountGroups: [], // الحقل الجديد الافتراضي
   displayCurrency: 'USD',
 }
 
@@ -39,8 +53,6 @@ function buildMaps(bomLines: BOMLine[], prices: PriceItem[]) {
 }
 
 // ─── Recursive cost resolver ─────────────────────────────────────────────────
-// Returns { rmCost, pkCost, node }
-// We never count SFG/INT cost directly — we expand them
 function resolveItem(
   code: string,
   qty: number,
@@ -94,7 +106,6 @@ function resolveItem(
     children: childNodes,
   }
 
-  // For SFG/INT we pass up rm+pk as rm (they're all raw inside)
   return {
     rmCost: type === 'SFG' || type === 'INT' || type === 'FG' ? totalRM : (type === 'RM' ? totalRM + totalPK : 0),
     pkCost: type === 'FG' ? totalPK : (type === 'PK' ? totalPK : 0),
@@ -107,13 +118,23 @@ export function computeProducts(
   products: RawProduct[],
   bomLines: BOMLine[],
   prices: PriceItem[],
-  settings: AppSettings = DEFAULT_SETTINGS
+  settings: MappedAppSettings = DEFAULT_SETTINGS
 ): ComputedProduct[] {
   const { bomByParent, priceMap } = buildMaps(bomLines, prices)
 
-  // Build category discount map
-  const discountMap = new Map<string, number>()
-  for (const d of settings.categoryDiscounts) discountMap.set(d.category, d.discount)
+  // بناء خريطة بحث سريعة جداً للمنتجات المربوطة بمجموعات الخصم بدلاً من الفئات القديمة
+  const productDiscountMap = new Map<string, number>()
+  
+  if (settings.discountGroups && Array.isArray(settings.discountGroups)) {
+    for (const group of settings.discountGroups) {
+      const discount = group.discountValue || 0
+      if (group.productCodes && Array.isArray(group.productCodes)) {
+        for (const code of group.productCodes) {
+          productDiscountMap.set(code, discount)
+        }
+      }
+    }
+  }
 
   return products.map((product) => {
     // Resolve BOM for this FG product
@@ -147,9 +168,10 @@ export function computeProducts(
       totalCostWithInsurance,
     }
 
-    // Profitability
-    const categoryDiscount = discountMap.get(product.category) ?? 0
-    const netSalePrice = product.companyPrice * (1 - categoryDiscount)
+    // Profitability ── التعديل هنا: البحث عن خصم كود المنتج المباشر بدلاً من الفئة العامة
+    const productDiscount = productDiscountMap.get(product.code) ?? 0
+    const netSalePrice = product.companyPrice * (1 - productDiscount)
+    
     const grossMarginRM = netSalePrice - totalMaterialCost
     const grossMarginRMPct = netSalePrice > 0 ? (grossMarginRM / netSalePrice) * 100 : 0
     const netProfit = netSalePrice - totalCostWithInsurance
@@ -164,7 +186,7 @@ export function computeProducts(
       ...product,
       costs,
       bomTree,
-      categoryDiscount,
+      categoryDiscount: productDiscount, // حافظنا على اسم المتغير في النوع تلافياً لتغيير ملف الـ types
       netSalePrice,
       grossMarginRM,
       grossMarginRMPct,
@@ -229,11 +251,9 @@ export function analyzeRMImpact(
   products: ComputedProduct[],
   bomLines: BOMLine[],
   prices: PriceItem[],
-  settings: AppSettings = DEFAULT_SETTINGS
+  settings: MappedAppSettings = DEFAULT_SETTINGS
 ) {
-  // Find products that use this RM (recursively)
   const affected = products.filter((p) => productUsesRM(p.code, rmCode, bomLines, new Set()))
-
   const newPrices = prices.map((p) => (p.code === rmCode ? { ...p, unitCostUSD: newPrice } : p))
 
   const recomputed = computeProducts(
