@@ -1,11 +1,11 @@
 'use client'
-import { useState } from 'react'
-import { Save, Plus, Trash2, Check, AlertTriangle, RefreshCw } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { Save, Plus, Trash2, Check, AlertTriangle, RefreshCw, Upload } from 'lucide-react'
 import { useAppStore } from '@/store/appStore'
 import { computeProducts } from '@/lib/costingEngine'
 import type { AppSettings } from '@/types'
+import * as XLSX from 'xlsx'
 
-// تعريف هيكل مجموعة الخصم الجديدة داخل الملف
 interface DiscountGroup {
   id: string
   name: string
@@ -30,7 +30,6 @@ const Label = ({ children }: { children: React.ReactNode }) => (
 export default function SettingsPanel() {
   const { settings, updateSettings, rawProducts, bomLines, prices, setComputedProducts, pushToCloud } = useAppStore()
   
-  // دمج الحقل الجديد في الـ local state مع الحفاظ على البيانات القديمة
   const [local, setLocal] = useState<AppSettings & { discountGroups?: DiscountGroup[] }>({
     ...settings,
     discountGroups: (settings as any).discountGroups || []
@@ -39,6 +38,7 @@ export default function SettingsPanel() {
   const [flash, setFlash] = useState(false)
   const [recalc, setRecalc] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({})
 
   const save = async () => {
     setRecalc(true)
@@ -62,7 +62,6 @@ export default function SettingsPanel() {
     const arr = [...s.weightExpenseRanges]; arr[i] = { ...arr[i], [field]: val }; return { ...s, weightExpenseRanges: arr }
   })
 
-  // ── دج الـ LOGIC الجديد لمجموعات الخصم ───────────────────
   const addDiscountGroup = () => setLocal(s => ({
     ...s,
     discountGroups: [...(s.discountGroups || []), { id: crypto.randomUUID(), name: '', discountValue: 0, productCodes: [] }]
@@ -91,11 +90,60 @@ export default function SettingsPanel() {
     })
   }))
 
-  // دالة ذكية لتجميع كل الأكواد المحجوزة في مجموعات تانية لمنع تكرار المنتج
   const getAllAssignedCodesExcept = (currentGroupId: string) => {
     return (local.discountGroups || [])
       .filter(g => g.id !== currentGroupId)
       .reduce((acc, g) => [...acc, ...(g.productCodes || [])], [] as string[])
+  }
+
+  // ─── دالة معالجة ورفع ملف الـ Excel المخصص للمجموعة ───────────────────
+  const handleExcelImport = (groupId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (evt) => {
+      const bstr = evt.target?.result
+      const wb = XLSX.read(bstr, { type: 'binary' })
+      const wsname = wb.SheetNames[0]
+      const ws = wb.Sheets[wsname]
+      // تحويل البيانات إلى صفوف
+      const data = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[]
+
+      // استخراج الأكواد من العمود الأول (تخطي الصف الأول العناوين لو نص)
+      const importedCodes: string[] = data
+        .map(row => String(row[0] || '').trim())
+        .filter(code => code && code !== '' && code.toLowerCase() !== 'code' && code.toLowerCase() !== 'كود')
+
+      const forbiddenCodes = getAllAssignedCodesExcept(groupId)
+      
+      // فلترة الأكواد المتواجدة فعلياً في الـ 754 منتج وغير محجوزة لمجموعة أخرى
+      const validCodes = importedCodes.filter(code => {
+        const existsInSystem = rawProducts.some(p => String(p.code || (p as any).CODE) === code)
+        const isLocked = forbiddenCodes.includes(code)
+        return existsInSystem && !isLocked
+      })
+
+      if (validCodes.length === 0) {
+        alert('تنبيه: لم يتم العثور على أكواد مطابقة أو أن المنتجات محجوزة في مجموعات أخرى بالفعل.')
+        return
+      }
+
+      // دمج الأكواد المرفوعة مع الأكواد الحالية للمجموعة بدون تكرار
+      setLocal(s => ({
+        ...s,
+        discountGroups: (s.discountGroups || []).map(g => {
+          if (g.id !== groupId) return g
+          const current = g.productCodes || []
+          const combined = Array.from(new Set([...current, ...validCodes]))
+          return { ...g, productCodes: combined }
+        })
+      }))
+      
+      // تصفير مدخل الملف للسماح برفع نفس الملف مجدداً إن لزم
+      e.target.value = ''
+    }
+    reader.readAsBinaryString(file)
   }
 
   return (
@@ -110,7 +158,6 @@ export default function SettingsPanel() {
             <input className="input" type="number" step={0.01} min={0}
               value={local.exchangeRateLYD}
               onChange={e => setLocal(s => ({ ...s, exchangeRateLYD: parseFloat(e.target.value) || 0 }))} />
-            <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 4 }}>Used for LYD display across the app</div>
           </div>
           <div>
             <Label>Insurance Rate</Label>
@@ -122,7 +169,6 @@ export default function SettingsPanel() {
                 = {(local.insuranceRate * 100).toFixed(0)}%
               </span>
             </div>
-            <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 4 }}>Enter as decimal: 0.10 = 10%</div>
           </div>
           <div>
             <Label>Default Display Currency</Label>
@@ -150,11 +196,6 @@ export default function SettingsPanel() {
               <div key={h} style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.07em' }}>{h}</div>
             ))}
           </div>
-          {local.weightExpenseRanges.length === 0 && (
-            <div style={{ padding: '16px 0', textAlign: 'center', color: 'var(--text-3)', fontSize: 12 }}>
-              No ranges defined — industrial expenses will be 0
-            </div>
-          )}
           {local.weightExpenseRanges.map((r, i) => (
             <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 36px', gap: '6px 10px', marginBottom: 6 }}>
               <input className="input" type="number" step={0.1} min={0} value={r.minWeight}
@@ -173,9 +214,9 @@ export default function SettingsPanel() {
         </div>
       </div>
 
-      {/* ── PRODUCT DISCOUNT GROUPS (تعديل مجموعات الخصم الآمن) ── */}
+      {/* ── PRODUCT DISCOUNT GROUPS (الرفع بأكسيل مع التعديل اليدوي الكامل) ── */}
       <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
-        <SH title="Product Discount Groups" desc="Create custom groups and link specific products directly"
+        <SH title="Product Discount Groups" desc="Create custom groups, import via Excel, or edit manually"
           right={
             <button className="btn btn-primary" onClick={addDiscountGroup} style={{ height: 28, fontSize: 11 }}>
               <Plus size={12} /> Add Group
@@ -194,38 +235,49 @@ export default function SettingsPanel() {
             
             return (
               <div key={group.id} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: 12, position: 'relative' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1.5fr 36px', gap: 10, alignItems: 'center' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 0.8fr 1fr 1.2fr 36px', gap: 8, alignItems: 'center' }}>
                   
                   {/* اسم المجموعة */}
-                  <input className="input" type="text" placeholder="Group Name (e.g., Cement 7%)" 
+                  <input className="input" type="text" placeholder="Group Name (e.g., Grout 5%)" 
                     value={group.name} 
                     onChange={e => setDiscountGroupField(group.id, 'name', e.target.value)} />
 
                   {/* قيمة الخصم */}
                   <div style={{ position: 'relative' }}>
-                    <input className="input" type="number" step={0.01} min={0} max={1} style={{ paddingRight: 45 }}
+                    <input className="input" type="number" step={0.01} min={0} max={1} style={{ paddingRight: 35 }}
                       value={group.discountValue} 
                       onChange={e => setDiscountGroupField(group.id, 'discountValue', parseFloat(e.target.value) || 0)} />
-                    <span style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', fontSize: 10, color: 'var(--text-3)', fontWeight: 600 }}>
+                    <span style={{ position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)', fontSize: 10, color: 'var(--text-3)', fontWeight: 600 }}>
                       ={(group.discountValue * 100).toFixed(0)}%
                     </span>
                   </div>
 
-                  {/* قائمة إدارة المنتجات المنسدلة */}
+                  {/* زرار الرفع السريع بالاكسيل للمجموعة الحالية */}
+                  <div>
+                    <input type="file" accept=".xlsx, .xls" style={{ display: 'none' }}
+                      ref={el => { fileInputRefs.current[group.id] = el }}
+                      onChange={(e) => handleExcelImport(group.id, e)} />
+                    <button className="btn" style={{ width: '100%', fontSize: 11, height: 34, gap: 4, background: 'var(--surface)', border: '1px solid var(--border)' }}
+                      onClick={(e) => { e.preventDefault(); fileInputRefs.current[group.id]?.click() }}>
+                      <Upload size={12} /> Excel
+                    </button>
+                  </div>
+
+                  {/* قائمة إدارة وتعديل المنتجات يدوياً (Dropdown) */}
                   <div style={{ position: 'relative' }}>
                     <button className="btn" style={{ width: '100%', fontSize: 11, background: 'var(--surface)', justifyContent: 'center', height: 34, border: '1px solid var(--border)' }}
-                      onClick={() => setActiveDropdown(activeDropdown === group.id ? null : group.id)}>
+                      onClick={(e) => { e.preventDefault(); setActiveDropdown(activeDropdown === group.id ? null : group.id) }}>
                       📦 Products ({group.productCodes?.length || 0})
                     </button>
 
                     {activeDropdown === group.id && (
-                      <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 50, maxHeight: 200, overflowY: 'auto', padding: 6, marginTop: 4 }}>
-                        <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-3)', paddingBottom: 4, borderBottom: '1px solid var(--border)', marginBottom: 4 }}>Select products:</div>
+                      <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 999, maxHeight: 200, overflowY: 'auto', padding: 6, marginTop: 4 }}>
+                        <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-3)', paddingBottom: 4, borderBottom: '1px solid var(--border)', marginBottom: 4 }}>Add / Remove Items Manually:</div>
                         {rawProducts.map(p => {
-                          const isChecked = group.productCodes?.includes(p.code || (p as any).CODE)
-                          const isLocked = forbiddenCodes.includes(p.code || (p as any).CODE)
                           const pCode = p.code || (p as any).CODE
-                          const pName = p.name || (p as any).PRODUCT_NAME || (p as any).name
+                          const pName = p.name || (p as any).PRODUCT_NAME || p.name
+                          const isChecked = group.productCodes?.includes(pCode)
+                          const isLocked = forbiddenCodes.includes(pCode)
 
                           return (
                             <label key={pCode} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 6px', borderRadius: 4, cursor: isLocked ? 'not-allowed' : 'pointer', opacity: isLocked ? 0.4 : 1, fontSize: 11, background: isChecked ? 'var(--surface-2)' : 'transparent' }}>
@@ -234,7 +286,7 @@ export default function SettingsPanel() {
                               <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 [{pCode}] {pName}
                               </span>
-                              {isLocked && <span style={{ fontSize: 8, color: 'var(--red)', fontWeight: 700, marginLeft: 'auto' }}>(Taken)</span>}
+                              {isLocked && <span style={{ fontSize: 8, color: 'var(--red)', fontWeight: 700, marginLeft: 'auto' }}>(Grouped)</span>}
                             </label>
                           )
                         })}
@@ -242,23 +294,24 @@ export default function SettingsPanel() {
                     )}
                   </div>
 
-                  {/* حذف المجموعة */}
+                  {/* حذف المجموعة بالكامل */}
                   <button onClick={() => delDiscountGroup(group.id)}
                     style={{ background: 'var(--red-bg)', border: '1px solid var(--red-mid)', borderRadius: 7, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--red)', height: 34 }}>
                     <Trash2 size={13} />
                   </button>
                 </div>
 
-                {/* شارات المنتجات المختارة للعرض الفوري السريع */}
+                {/* شارات المنتجات المربوطة حالياً لتسهيل الحذف الفوري بنقرة واحدة */}
                 {group.productCodes?.length > 0 && (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 8, borderTop: '1px dashed var(--border)', paddingTop: 8 }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 8, borderTop: '1px dashed var(--border)', paddingTop: 8, maxHeight: 100, overflowY: 'auto' }}>
                     {group.productCodes.map(c => {
                       const found = rawProducts.find(p => (p.code || (p as any).CODE) === c)
                       const nameDisplay = found ? (found.name || (found as any).PRODUCT_NAME || c) : c
                       return (
                         <span key={c} style={{ background: 'var(--surface)', border: '1px solid var(--border)', fontSize: 10, padding: '2px 6px', borderRadius: 4, display: 'flex', alignItems: 'center', gap: 4, color: 'var(--text-2)' }}>
-                          {nameDisplay}
-                          <span style={{ color: 'var(--text-3)', cursor: 'pointer', fontWeight: 700 }} onClick={() => toggleProductInGroup(group.id, c)}>×</span>
+                          [{c}] {nameDisplay}
+                          <span style={{ color: 'var(--red)', cursor: 'pointer', fontWeight: 700 }} title="حذف من المجموعة" 
+                            onClick={() => toggleProductInGroup(group.id, c)}>×</span>
                         </span>
                       )
                     })}
@@ -280,11 +333,6 @@ export default function SettingsPanel() {
             ? <><Check size={14} /> Saved & Recalculated!</>
             : <><Save size={14} /> Save Settings & Recalculate</>}
         </button>
-        {rawProducts.length === 0 && (
-          <span style={{ fontSize: 11, color: 'var(--amber)' }}>
-            ⚠ No data loaded yet — settings will apply on next upload
-          </span>
-        )}
         {rawProducts.length > 0 && !recalc && !flash && (
           <span style={{ fontSize: 11, color: 'var(--text-3)' }}>
             Will recalculate costs for {rawProducts.length} products and push to cloud
