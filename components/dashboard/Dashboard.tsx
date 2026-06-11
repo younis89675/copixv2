@@ -17,10 +17,12 @@ const PIE_ENTERPRISE = ['#dc2626', '#ea580c', '#0284c7', '#16a34a', '#4f46e5']
 
 export default function Dashboard() {
   const { computedProducts, isLoaded } = useAppStore()
+  
   const stats = useMemo(
     () => isLoaded ? computeDashboardStats(computedProducts) : null,
     [computedProducts, isLoaded]
   )
+  
   if (!isLoaded || !stats) return null
 
   const getMarginColor = (p: number) => p >= 20 ? '#16a34a' : p >= 10 ? '#0284c7' : p >= 0 ? '#ca8a04' : '#dc2626'
@@ -104,10 +106,10 @@ export default function Dashboard() {
             <div style={{ fontSize: 10, fontWeight: 700, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 2 }}>Highest Profit Category</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <span style={{ fontSize: 14, fontWeight: 600, color: SAP_COLORS.textDark }}>
-                {stats.highestProfitCategory.name.replace('فئة الصنف ','').replace('فئة ','')}
+                {(stats.highestProfitCategory as any)?.name?.replace('فئة الصنف ','').replace('فئة ','') || 'N/A'}
               </span>
               <span style={{ fontSize: 13, color: '#16a34a', fontWeight: 600, fontVariantNumeric: 'tabular-nums', marginLeft: 8 }}>
-                {stats.highestProfitCategory.avgProfitPct.toFixed(1)}% <span style={{ fontSize: 10, fontWeight: 400, color: SAP_COLORS.textMuted }}>margin</span>
+                {((stats.highestProfitCategory as any)?.avgProfitPct || (stats.highestProfitCategory as any)?.avgProfit || 0).toFixed(1)}% <span style={{ fontSize: 10, fontWeight: 400, color: SAP_COLORS.textMuted }}>margin</span>
               </span>
             </div>
           </div>
@@ -123,10 +125,10 @@ export default function Dashboard() {
             <div style={{ fontSize: 10, fontWeight: 700, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 2 }}>Lowest Profit Category</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <span style={{ fontSize: 14, fontWeight: 600, color: SAP_COLORS.textDark }}>
-                {stats.lowestProfitCategory.name.replace('فئة الصنف ','').replace('فئة ','')}
+                {(stats.lowestProfitCategory as any)?.name?.replace('فئة الصنف ','').replace('فئة ','') || 'N/A'}
               </span>
               <span style={{ fontSize: 13, color: '#dc2626', fontWeight: 600, fontVariantNumeric: 'tabular-nums', marginLeft: 8 }}>
-                {stats.lowestProfitCategory.avgProfitPct.toFixed(1)}% <span style={{ fontSize: 10, fontWeight: 400, color: '#dc2626' }}>· Urgent Review</span>
+                {((stats.lowestProfitCategory as any)?.avgProfitPct || (stats.lowestProfitCategory as any)?.avgProfit || 0).toFixed(1)}% <span style={{ fontSize: 10, fontWeight: 400, color: '#dc2626' }}>· Urgent Review</span>
               </span>
             </div>
           </div>
@@ -142,7 +144,7 @@ export default function Dashboard() {
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.05em', textTransform: 'uppercase', color: SAP_COLORS.textMuted, marginBottom: 12, borderBottom: `1px solid ${SAP_COLORS.neutralBg}`, paddingBottom: 6 }}>
             Average Net Margin by Category
           </div>
-          <CategoryChart data={stats.categoryBreakdown} />
+          <CategoryChart data={stats.categoryBreakdown as any} />
         </div>
 
         {/* Donut */}
