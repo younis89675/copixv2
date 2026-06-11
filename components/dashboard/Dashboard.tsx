@@ -5,7 +5,7 @@ import { useAppStore } from '@/store/appStore'
 import { computeDashboardStats } from '@/lib/costingEngine'
 import CategoryChart from './CategoryChart'
 
-// التعديل السحري هنا: الـ Interface متظبطة بالملي زي ما الـ CategoryChart طالبها بالظبط!
+// الـ Interface متظبطة بالملي زي ما الـ CategoryChart طالبها
 interface CategoryStat {
   category: string   // الـ Chart طالبها category مش name
   count: number
@@ -32,13 +32,12 @@ interface DashboardStats {
 export default function Dashboard() {
   const { computedProducts, isLoaded } = useAppStore()
 
-  // عمل كاستنج للبيانات وتحويل الأسامي للـ Format اللي بيفهمه الـ CategoryChart
+  // تحويل البيانات للـ Format اللي بيفهمه الـ CategoryChart والـ TypeScript
   const stats = useMemo(() => {
     if (!isLoaded || !computedProducts || !computedProducts.length) return null
     
     const rawStats = computeDashboardStats(computedProducts) as any
     
-    // هنا بنضمن إن كل الـ Breakdown والـ Highlights واخدين كلمة category بدل name عشان الـ TypeScript والـ Chart يرضوا عننا
     const categoryBreakdown = (rawStats.categoryBreakdown || []).map((item: any) => ({
       category: item.name || item.category || '',
       count: item.count || 0,
@@ -80,7 +79,6 @@ export default function Dashboard() {
     return 'text-red-600'
   }
 
-  // ألوان الـ Donut Chart
   const COLORS = ['#dc2626', '#ea580c', '#0284c7', '#16a34a', '#4f46e5']
 
   return (
