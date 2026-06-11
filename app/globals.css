@@ -2,86 +2,95 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Enterprise Design Tokens (SAP / Odoo Style) ───────────────── */
+/* ── ✨ THE PRESTIGE MODERN THEME (Vercel & Linear Style) ── */
 :root {
-  --bg:          #f4f6f9;     /* رمادي خفيف جداً يمنح عمقاً مريحاً للعين */
+  /* خلفية نقية وواسعة تريح العين فوراً */
+  --bg:          #fafafa; 
   --surface:     #ffffff;
-  --surface-2:   #f8fafc;     /* أسطح فرعية ناعمة ورصينة */
-  --surface-3:   #edf2f7;
-  --border:      #e2e8f0;     /* حدود أدق وأقل حدة من السابق */
-  --border-2:    #cbd5e1;
-  --text-1:      #1e293b;     /* نصوص رئيسية متباينة وواضحة */
-  --text-2:      #475569;
-  --text-3:      #64748b;
-  --accent:      #0284c7;     /* الأزرق المالي الرصين بدلاً من الأزرق الفاقع */
-  --accent-bg:   #f0f9ff;
-  --accent-text: #0369a1;
-  --green:       #16a34a;     /* أخضر محاسبي هادئ */
+  --surface-2:   #f4f4f5; 
+  --surface-3:   #e4e4e7;
+  --border:      #e4e4e7; 
+  --border-2:    #d4d4d8;
+  
+  /* نصوص بتباين فخم وعالي الجودة منعاً للإجهاد */
+  --text-1:      #09090b; /* أسود ملكي عميق */
+  --text-2:      #52525b; /* رمادي متوازن ومريح للقراءة */
+  --text-3:      #a1a1aa;
+  
+  /* اللون البراند الأزرق الحيوي المبهج */
+  --accent:      #2563eb; 
+  --accent-bg:   #eff6ff;
+  --accent-text: #1d4ed8;
+  
+  /* ألوان المؤشرات المالية بنقاء وحيوية عالية جداً */
+  --green:       #16a34a;
   --green-bg:    #f0fdf4;
   --green-mid:   #bbf7d0;
+  
   --amber:       #d97706;
-  --amber-bg:    #fef3c7;
-  --red:         #dc2626;     /* أحمر مالي صريح للخسائر أو الهوامش المنخفضة */
+  --amber-bg:    #fffbeb;
+  
+  --red:         #dc2626;
   --red-bg:      #fef2f2;
-  --red-mid:     #fecaca;
-  --purple:      #4f46e5;
-  --purple-bg:   #e0e7ff;
-  --shadow-sm:   0 1px 2px rgba(0,0,0,.05); /* ظلال مسطحة شبه معدومة */
-  --shadow-md:   0 4px 6px -1px rgba(0,0,0,.05), 0 2px 4px -1px rgba(0,0,0,.03);
-  --radius:      4px;         /* الحواف الاحترافية الصارمة للمنصات الضخمة */
-  --radius-sm:   3px;
-  --sidebar-w:   224px;
+  --red-mid:     #fca5a5;
+  
+  --purple:      #7c3aed;
+  --purple-bg:   #f5f3ff;
+  
+  /* إعادة الظلال الناعمة متعددة الطبقات لعمق مريح وفخم للكروت */
+  --shadow-sm:   0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md:   0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg:   0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  
+  --radius:      12px; /* حواف دائرية ناعمة وعصرية تفتح النفس */
+  --radius-sm:   8px;
+  --sidebar-w:   240px; /* عرض سايدبار فخم ومريح للنصوص */
 }
 
+/* الوضع الليلي الفاخر */
 .dark {
-  --bg:          #0f172a;
-  --surface:     #1e293b;
-  --surface-2:   #334155;
-  --surface-3:   #475569;
-  --border:      #334155;
-  --border-2:    #475569;
-  --text-1:      #f8fafc;
-  --text-2:      #cbd5e1;
-  --text-3:      #94a3b8;
-  --accent:      #38bdf8;
-  --accent-bg:   #0c4a6e;
-  --accent-text: #7dd3fc;
+  --bg:          #09090b;
+  --surface:     #18181b;
+  --surface-2:   #27272a;
+  --surface-3:   #3f3f46;
+  --border:      #27272a;
+  --border-2:    #3f3f46;
+  --text-1:      #f4f4f5;
+  --text-2:      #a1a1aa;
+  --text-3:      #71717a;
+  --accent:      #3b82f6;
+  --accent-bg:   #172554;
+  --accent-text: #93c5fd;
   --green:       #4ade80;
   --green-bg:    #052e16;
   --green-mid:   #14532d;
   --amber:       #fbbf24;
   --amber-bg:    #451a03;
   --red:         #f87171;
-  --red-bg:      #7f1d1d;
-  --red-mid:     #991b1b;
+  --red-bg:      #450a0a;
+  --red-mid:     #7f1d1d;
 }
 
-/* ── Base ──────────────────────────────────────────────────────── */
+/* ── الهيكل الأساسي ────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body {
   margin: 0; padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
-  font-size: 12.5px; /* تصغير الخط العام قليلاً لزيادة كثافة البيانات المستعرضة */
-  line-height: 1.42857;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13.5px; /* رجعنا الخط لحجمه الكبير المريح والقابل للقراءة بسهولة */
+  line-height: 1.6;
   background: var(--bg);
   color: var(--text-1);
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar       { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 99px; }
+::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 99px; }
 
-/* ── Layout Shell ──────────────────────────────────────────────── */
-.app-shell {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
-}
+.app-shell { display: flex; height: 100vh; overflow: hidden; }
 
-/* ── Sidebar ───────────────────────────────────────────────────── */
+/* ── السايدبار العصري المريح ───────────────────────────────────── */
 .sidebar {
   width: var(--sidebar-w);
   flex-shrink: 0;
@@ -90,233 +99,126 @@ html, body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  position: sticky;
-  top: 0;
-  z-index: 40;
 }
 .sidebar-logo {
-  padding: 14px 16px; /* تقليص الهوامش العلوية والسفلية */
+  padding: 24px 20px 18px; /* مساحات واسعة وشرحة */
   border-bottom: 1px solid var(--border);
 }
 .logo-mark {
-  width: 30px; height: 30px;
-  background: var(--accent);
+  width: 36px; height: 36px;
+  background: var(--text-1); 
   border-radius: var(--radius-sm);
   display: flex; align-items: center; justify-content: center;
-  color: #fff; font-weight: 700; font-size: 13px; letter-spacing: -.5px;
+  color: var(--surface); font-weight: 700; font-size: 14px;
 }
 .logo-title {
-  margin-top: 6px;
-  font-size: 13px; font-weight: 600;
-  color: var(--text-1); letter-spacing: -.3px;
+  margin-top: 12px;
+  font-size: 15px; font-weight: 600;
+  color: var(--text-1); letter-spacing: -0.3px;
 }
-.logo-sub { font-size: 10.5px; color: var(--text-3); margin-top: 1px; }
-
-.sidebar-nav { flex: 1; padding: 8px 6px; overflow-y: auto; }
+.sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
 .nav-group-label {
-  font-size: 9.5px; font-weight: 600; letter-spacing: .07em;
+  font-size: 10px; font-weight: 500; letter-spacing: .05em;
   color: var(--text-3); text-transform: uppercase;
-  padding: 8px 8px 4px;
+  padding: 12px 12px 6px;
 }
 .nav-link {
-  display: flex; align-items: center; gap: 8px;
-  padding: 6px 10px; border-radius: var(--radius-sm);
-  font-size: 12px; color: var(--text-2);
-  cursor: pointer; text-decoration: none;
-  transition: background .1s, color .1s;
-  margin-bottom: 1px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text-2); text-decoration: none;
+  transition: all 0.15s ease; margin-bottom: 2px;
 }
 .nav-link:hover { background: var(--surface-2); color: var(--text-1); }
 .nav-link.active {
-  background: var(--accent-bg);
-  color: var(--accent);
-  font-weight: 500;
+  background: var(--accent-bg); 
+  color: var(--accent-text);
+  font-weight: 600;
 }
-.nav-link svg { width: 14px; height: 14px; flex-shrink: 0; }
-.nav-badge {
-  margin-left: auto;
-  font-size: 9.5px; font-weight: 600;
-  padding: 1px 5px; border-radius: var(--radius-sm);
-  background: var(--accent); color: #fff;
-}
-.nav-badge.green { background: var(--green); }
+.nav-link svg { width: 16px; height: 16px; opacity: 0.8; }
 
 .sidebar-footer {
-  padding: 8px 12px;
+  padding: 14px 16px;
   border-top: 1px solid var(--border);
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; gap: 12px;
 }
-.avatar {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: var(--purple-bg);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10.5px; font-weight: 600; color: var(--purple);
-  flex-shrink: 0;
-}
-.footer-name { font-size: 11.5px; font-weight: 500; color: var(--text-1); }
-.footer-role { font-size: 9.5px; color: var(--text-3); }
 
-/* ── Main area ─────────────────────────────────────────────────── */
+/* ── منطقة العمل والصفحات ───────────────────────────────── */
 .main-area { flex: 1; overflow: auto; min-width: 0; display: flex; flex-direction: column; }
 
-/* ── Topbar ────────────────────────────────────────────────────── */
 .topbar {
-  height: 44px; /* تقليل الارتفاع لزيادة المساحة المخصصة للبيانات */
+  height: 56px; /* زيادة الارتفاع ليعطي فخامة وراحة */
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  display: flex; align-items: center;
-  padding: 0 16px; gap: 12px;
-  position: sticky; top: 0; z-index: 30;
-  flex-shrink: 0;
+  display: flex; align-items: center; padding: 0 32px; gap: 16px;
 }
-.topbar-title { font-size: 13px; font-weight: 600; color: var(--text-1); flex: 1; }
-.topbar-sub { font-size: 11.5px; color: var(--text-3); }
+.topbar-title { font-size: 16px; font-weight: 600; color: var(--text-1); }
 
-/* ── Page content ──────────────────────────────────────────────── */
-.page-body { padding: 12px 16px; flex: 1; overflow: auto; }
+.page-body { padding: 32px; flex: 1; overflow: auto; } /* مسافة تنفس واسعة وممتازة حول المحتوى */
 
-/* ── Cards ─────────────────────────────────────────────────────── */
+/* ── الكروت بلمسة الـ Soft Shadows والـ Padding الشرح ─────────── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 12px;
+  padding: 24px; /* كبرنا البادينج عشان ترتاح العين والبيانات تفرد */
   box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
-.card-title {
-  font-size: 10px; font-weight: 700; letter-spacing: .05em;
-  text-transform: uppercase; color: var(--text-3);
-  margin-bottom: 10px;
-  border-bottom: 1px solid var(--surface-3);
-  padding-bottom: 4px;
+.card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-2);
+  transform: translateY(-1px); /* حركة خفيفة للأعلى تعطي حياة للتطبيق */
 }
 
-/* KPI cards */
+/* كروت الـ KPI الحيوية */
 .kpi-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 10px 12px;
-  position: relative; overflow: hidden;
+  padding: 20px 24px;
   box-shadow: var(--shadow-sm);
 }
-.kpi-icon {
-  width: 26px; height: 26px; border-radius: var(--radius-sm);
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 6px;
-}
-.kpi-icon svg { width: 14px; height: 14px; }
-.kpi-val { font-size: 20px; font-weight: 700; color: var(--text-1); font-variant-numeric: tabular-nums; line-height: 1; }
-.kpi-label { font-size: 10.5px; font-weight: 600; color: var(--text-3); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.02em; }
-.kpi-delta { font-size: 10.5px; font-weight: 500; margin-top: 6px; display: flex; align-items: center; gap: 3px; }
-.kpi-delta svg { width: 11px; height: 11px; }
-.kpi-accent { position: absolute; top: 0; right: 0; width: 3px; height: 100%; }
+.kpi-val { font-size: 26px; font-weight: 700; color: var(--text-1); letter-spacing: -0.75px; }
+.kpi-label { font-size: 12px; font-weight: 500; color: var(--text-2); }
 
-/* ── Buttons ───────────────────────────────────────────────────── */
+/* ── الأزرار الحديثة والمسطحة الأنيقة ────────────────────────────── */
 .btn {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 5px 10px; border-radius: var(--radius-sm);
-  font-size: 11.5px; font-weight: 500; cursor: pointer;
-  border: 1px solid transparent; transition: all .1s;
-  text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 8px 16px; border-radius: var(--radius-sm);
+  font-size: 12.5px; font-weight: 500; cursor: pointer;
+  border: 1px solid transparent; transition: all 0.15s ease;
 }
-.btn svg { width: 12px; height: 12px; }
-.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-.btn-primary:hover { opacity: .95; background: var(--accent-text); }
-.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
-.btn-ghost {
-  background: var(--surface); color: var(--text-2);
-  border-color: var(--border);
-}
-.btn-ghost:hover { background: var(--surface-2); color: var(--text-1); border-color: var(--border-2); }
-.btn-icon {
-  width: 26px; height: 26px; padding: 0;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); cursor: pointer; color: var(--text-2);
-  transition: all .1s;
-}
-.btn-icon:hover { background: var(--surface-2); color: var(--text-1); }
-.btn-icon svg { width: 13px; height: 13px; }
+.btn-primary { background: var(--text-1); color: var(--surface); border-color: var(--text-1); }
+.btn-primary:hover { opacity: 0.9; }
+.btn-ghost { background: var(--surface); color: var(--text-2); border-color: var(--border); }
+.btn-ghost:hover { background: var(--surface-2); color: var(--text-1); }
 
-/* ── Status Badge ──────────────────────────────────────────────── */
-.badge {
-  display: inline-flex; align-items: center; gap: 3px;
-  padding: 1px 6px; border-radius: 2px; /* حواف حادة ومستقيمة للشارات التوضيحية */
-  font-size: 10.5px; font-weight: 600;
-}
-.badge-green  { background: var(--green-bg);  color: var(--green); border: 1px solid var(--green-mid); }
-.badge-amber  { background: var(--amber-bg);  color: var(--amber); border: 1px solid #fde047; }
-.badge-red    { background: var(--red-bg);    color: var(--red); border: 1px solid var(--red-mid); }
-.badge-blue   { background: var(--accent-bg); color: var(--accent); border: 1px solid #bae6fd; }
-.badge-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid #ddd6fe; }
-
-/* ── Inputs ────────────────────────────────────────────────────── */
-.input {
-  width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-1);
-  padding: 5px 8px;
-  font-size: 11.5px;
-  outline: none;
-  transition: border-color .1s, box-shadow .1s;
-  font-family: inherit;
-}
-.input:focus { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.input::placeholder { color: var(--text-3); }
-
-select.input { cursor: pointer; padding-right: 4px; }
-
-/* ── Table (The Heart of SAP/Odoo Dense Grid) ───────────────────── */
-.table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+/* ── الجداول الاحترافية المريحة للبيانات ──────────────────────── */
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .table th {
-  background: #f8fafc; /* رمادي خفيف لترويسة الجدول */
+  background: var(--surface-2);
   color: var(--text-2);
-  font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-  padding: 6px 10px; /* ضغط الخلايا رأسياً لجمع أكبر قدر من البيانات */
-  border-bottom: 2px solid var(--border);
-  border-top: 1px solid var(--border);
-  white-space: nowrap;
+  font-size: 11px; font-weight: 600; letter-spacing: .03em;
+  padding: 12px 16px; /* مسافة أوسع تمنع الخنق وتكدس الأسطر */
+  border-bottom: 1px solid var(--border-2);
+  text-align: left;
 }
 .table td {
-  padding: 5px 10px; /* ضغط الأسطر بدقة متناهية */
+  padding: 12px 16px;
   border-bottom: 1px solid var(--border);
   color: var(--text-1);
-  white-space: nowrap;
 }
-.table tr:last-child td { border-bottom: 1px solid var(--border); }
-.table tbody tr:hover td { background: var(--accent-bg) !important; color: var(--text-1); } /* تمييز مالي مريح عند تمرير الماوس */
-.table .num { 
-  font-variant-numeric: tabular-nums; 
-  font-family: 'Inter', -apple-system, sans-serif; 
-  text-align: right; /* أرقام العمليات الحسابية تحاذى لليمين بشكل صارم */
-  font-weight: 500;
+.table tbody tr:hover td { background: #fafafa; } 
+.table .num { font-variant-numeric: tabular-nums; font-family: ui-monospace, monospace; font-weight: 500; }
+
+/* ── الحالات والشارات ───────────────────────────────────────────── */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 500;
 }
+.divider { height: 1px; background: var(--border); margin: 24px 0; }
 
-/* ── Profit colors ─────────────────────────────────────────────── */
-.profit-high   { color: var(--green); font-weight: 600; }
-.profit-medium { color: var(--accent); font-weight: 600; }
-.profit-low    { color: var(--amber); font-weight: 600; }
-.profit-neg    { color: var(--red); font-weight: 600; background: var(--red-bg); padding: 1px 4px; border-radius: 2px; }
-
-/* ── Divider ───────────────────────────────────────────────────── */
-.divider { height: 1px; background: var(--border); margin: 12px 0; }
-
-/* ── Sync indicator ────────────────────────────────────────────── */
-.sync-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--green); flex-shrink: 0;
-  animation: pulse 2s ease-in-out infinite;
-}
-.sync-dot.offline { background: var(--text-3); animation: none; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-/* ── Print ─────────────────────────────────────────────────────── */
 @media print {
   .sidebar, .topbar, .no-print { display: none !important; }
-  .main-area { overflow: visible; }
-  body { background: white; color: black; font-size: 10px; }
-  .card { box-shadow: none; border: 1px solid #ddd; }
+  body { background: white; color: black; }
 }
