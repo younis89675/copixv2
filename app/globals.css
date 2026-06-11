@@ -2,78 +2,81 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── الـ Tokens بتحديث عصري احترافي ──────────────────────────────── */
+/* ── 🚀 MODERN VIBRANT SYSTEM TOKENS ─────────────────────────── */
 :root {
-  --bg:          #fafafa; /* خلفية فاتحة هادئة جداً على طريقة Vercel */
+  /* خلفية هادئة بلمسة رمادي خفيف جداً لبروز الكروت البيضاء */
+  --bg:          #f8fafc; 
   --surface:     #ffffff;
-  --surface-2:   #f4f4f5; /* رمادي ناعم جداً للـ Hover والأسطح الثانوية */
-  --surface-3:   #e4e4e7;
-  --border:      #e4e4e7; /* حدود ناعمة وغير حادة بصرياً */
-  --border-2:    #d4d4d8;
+  --surface-2:   #f1f5f9; 
+  --surface-3:   #e2e8f0;
+  --border:      #e2e8f0; 
+  --border-2:    #cbd5e1;
   
-  /* نصوص بتباين مريح جداً لمنع إجهاد العين */
-  --text-1:      #09090b; /* أسود عميق للنصوص الأساسية */
-  --text-2:      #52525b; /* رمادي متوازن للنصوص الثانوية */
-  --text-3:      #a1a1aa;
+  /* نصوص واضحة وعالية التباين */
+  --text-1:      #0f172a; /* أسود احترافي داكن */
+  --text-2:      #475569; /* رمادي واضح للأرقام والنصوص الثانوية */
+  --text-3:      #94a3b8;
   
-  /* اللون الأزرق البراند (Modern Electric Blue) */
+  /* لون البراند الأزرق الحيوي */
   --accent:      #2563eb; 
   --accent-bg:   #eff6ff;
   --accent-text: #1d4ed8;
   
-  /* ألوان الحالات (نجاح، تحذير، خطر) بنقاء أعلى */
-  --green:       #16a34a;
-  --green-bg:    #f0fdf4;
-  --green-mid:   #bbf7d0;
-  --amber:       #d97706;
-  --amber-bg:    #fffbe6;
-  --red:         #dc2626;
+  /* إعادة الألوان الحية والواضحة للمؤشرات (Vibrant Indicators) */
+  --green:       #10b981;
+  --green-bg:    #ecfdf5;
+  --green-mid:   #a7f3d0;
+  
+  --amber:       #f59e0b;
+  --amber-bg:    #fffbeb;
+  
+  --red:         #ef4444;
   --red-bg:      #fef2f2;
   --red-mid:     #fca5a5;
-  --purple:      #7c3aed;
+  
+  --purple:      #8b5cf6;
   --purple-bg:   #f5f3ff;
   
-  /* ظلال ناعمة متعددة الطبقات تعطي عمقاً فخماً للكروت */
-  --shadow-sm:   0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md:   0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  --shadow-lg:   0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  /* ظلال حقيقية وواضحة (Defined Shadows) لإعطاء عمق ممتاز للكروت */
+  --shadow-sm:   0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md:   0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.08);
+  --shadow-lg:   0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.06);
   
-  --radius:      12px; /* حواف دائرية مدروسة تتماشى مع العصر */
+  --radius:      12px; 
   --radius-sm:   8px;
-  --sidebar-w:   240px; /* زيادة عرض السايدبار قليلاً ليعطي فخامة ومساحة للنصوص */
+  --sidebar-w:   240px; 
 }
 
+/* الوضع الليلي الفخم */
 .dark {
-  --bg:          #09090b;
-  --surface:     #18181b;
-  --surface-2:   #27272a;
-  --surface-3:   #3f3f46;
-  --border:      #27272a;
-  --border-2:    #3f3f46;
-  --text-1:      #f4f4f5;
-  --text-2:      #a1a1aa;
-  --text-3:      #71717a;
+  --bg:          #020617;
+  --surface:     #0f172a;
+  --surface-2:   #1e293b;
+  --surface-3:   #334155;
+  --border:      #1e293b;
+  --border-2:    #334155;
+  --text-1:      #f8fafc;
+  --text-2:      #94a3b8;
+  --text-3:      #64748b;
   --accent:      #3b82f6;
   --accent-bg:   #172554;
   --accent-text: #93c5fd;
-  --green:       #4ade80;
-  --green-bg:    #052e16;
-  --green-mid:   #14532d;
+  --green:       #34d399;
+  --green-bg:    #064e3b;
+  --green-mid:   #065f46;
   --amber:       #fbbf24;
-  --amber-bg:    #451a03;
+  --amber-bg:    #78350f;
   --red:         #f87171;
-  --red-bg:      #450a0a;
-  --red-mid:     #7f1d1d;
-  --purple:      #a78bfa;
-  --purple-bg:   #2e1065;
+  --red-bg:      #7f1d1d;
+  --red-mid:     #991b1b;
 }
 
-/* ── تحسينات عامة للهيكل ────────────────────────────────────────── */
+/* ── 🕹️ BASE STRUCTURE ──────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body {
   margin: 0; padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 13px;
   line-height: 1.6;
   background: var(--bg);
@@ -81,19 +84,13 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* سكرول بار مخفي وناعم لا يشوه التصميم */
 ::-webkit-scrollbar       { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border-2); }
 
-.app-shell {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
-}
+.app-shell { display: flex; height: 100vh; overflow: hidden; }
 
-/* ── السايدبار الأنيق والمريح ───────────────────────────────────── */
+/* ── 🖥️ SIDEBAR ─────────────────────────────────────────────── */
 .sidebar {
   width: var(--sidebar-w);
   flex-shrink: 0;
@@ -102,144 +99,102 @@ html, body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  position: sticky;
-  top: 0;
-  z-index: 40;
 }
 .sidebar-logo {
-  padding: 24px 20px 18px; /* مساحة أكبر للتنفس */
+  padding: 20px;
   border-bottom: 1px solid var(--border);
 }
 .logo-mark {
-  width: 36px; height: 36px;
-  background: var(--text-1); /* أسود ملكي يعطي طابع الـ Premium للبراند */
+  width: 32px; height: 32px;
+  background: var(--accent); 
   border-radius: var(--radius-sm);
   display: flex; align-items: center; justify-content: center;
-  color: var(--surface); font-weight: 700; font-size: 14px;
-}
-.logo-title {
-  margin-top: 12px;
-  font-size: 15px; font-weight: 600;
-  color: var(--text-1); letter-spacing: -0.3px;
+  color: #fff; font-weight: 700; font-size: 14px;
 }
 .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
 .nav-group-label {
-  font-size: 10px; font-weight: 500; letter-spacing: .05em;
-  color: var(--text-3); text-transform: uppercase;
-  padding: 12px 12px 6px;
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  color: var(--text-3); padding: 12px 12px 6px; letter-spacing: 0.05em;
 }
 .nav-link {
   display: flex; align-items: center; gap: 10px;
-  padding: 8px 12px; border-radius: var(--radius-sm);
-  font-size: 13px; color: var(--text-2);
-  cursor: pointer; text-decoration: none;
-  transition: all 0.15s ease;
-  margin-bottom: 2px;
+  padding: 9px 12px; border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text-2); text-decoration: none;
+  transition: all 0.15s ease; margin-bottom: 2px;
 }
 .nav-link:hover { background: var(--surface-2); color: var(--text-1); }
 .nav-link.active {
-  background: var(--surface-2); /* تداخل هادئ وراقي بدلاً من الفاقع */
-  color: var(--text-1);
+  background: var(--accent-bg); 
+  color: var(--accent-text);
   font-weight: 600;
 }
-.nav-link svg { width: 16px; height: 16px; opacity: 0.8; }
 
-.sidebar-footer {
-  padding: 14px 16px;
-  border-top: 1px solid var(--border);
-  display: flex; align-items: center; gap: 12px;
-  background: var(--bg);
-}
-
-/* ── منطقة العمل العلوية والصفحات ───────────────────────────────── */
-.main-area { flex: 1; overflow: auto; min-width: 0; display: flex; flex-direction: column; }
+/* ── 🏛️ MAIN APP BODY ────────────────────────────────────────── */
+.main-area { flex: 1; overflow: auto; display: flex; flex-direction: column; }
 
 .topbar {
-  height: 56px;
-  background: var(--surface);
+  height: 56px; background: var(--surface);
   border-bottom: 1px solid var(--border);
-  display: flex; align-items: center;
-  padding: 0 32px; gap: 16px;
+  display: flex; align-items: center; padding: 0 24px;
   position: sticky; top: 0; z-index: 30;
-  flex-shrink: 0;
 }
-.topbar-title { font-size: 16px; font-weight: 600; color: var(--text-1); letter-spacing: -0.2px; }
+.topbar-title { font-size: 16px; font-weight: 600; color: var(--text-1); }
 
-.page-body { padding: 32px; flex: 1; overflow: auto; } /* بايدنج ممتاز يعطي طابع فخم للمحتوى */
+.page-body { padding: 24px; flex: 1; }
 
-/* ── الكروت بلمسة الـ Soft Shadow وعمق مريح ─────────────────────── */
+/* ── 🎴 VIBRANT CARDS WITH DEPTH ──────────────────────────────── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 24px;
   box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .card:hover {
   box-shadow: var(--shadow-md);
-  border-color: var(--border-2);
+  transform: translateY(-1px);
 }
 
-/* كروت الـ KPI الحيوية */
+/* كروت الـ KPI الحيوية الملونة بدقة */
 .kpi-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 20px 24px;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.kpi-val { font-size: 26px; font-weight: 700; color: var(--text-1); letter-spacing: -0.75px; }
-.kpi-label { font-size: 12px; font-weight: 500; color: var(--text-2); }
-
-/* ── الأزرار الحديثة والمسطحة الأنيقة ────────────────────────────── */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 8px 16px; border-radius: var(--radius-sm);
-  font-size: 12.5px; font-weight: 500; cursor: pointer;
-  border: 1px solid transparent; transition: all 0.15s ease;
+  padding: 20px;
   box-shadow: var(--shadow-sm);
 }
-.btn-primary { background: var(--text-1); color: var(--surface); border-color: var(--text-1); }
-.btn-primary:hover { opacity: 0.9; box-shadow: var(--shadow-md); }
-.btn-ghost {
-  background: var(--surface); color: var(--text-2);
-  border-color: var(--border);
-}
-.btn-ghost:hover { background: var(--surface-2); color: var(--text-1); border-color: var(--border-2); }
+.kpi-val { font-size: 24px; font-weight: 700; color: var(--text-1); letter-spacing: -0.5px; }
+.kpi-label { font-size: 12px; font-weight: 500; color: var(--text-2); margin-bottom: 4px; }
 
-/* ── الجداول الاحترافية المريحة للبيانات الضخمة ────────────────── */
-.table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+/* ── 📊 HIGH CONTRAST TABLES ──────────────────────────────────── */
+.table { width: 100%; border-collapse: collapse; }
 .table th {
   background: var(--surface-2);
   color: var(--text-2);
-  font-size: 11px; font-weight: 600; letter-spacing: .03em;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border-2);
+  font-size: 11px; font-weight: 600;
+  padding: 12px 16px; border-bottom: 1px solid var(--border-2);
   text-align: left;
 }
 .table td {
-  padding: 12px 16px; /* مسافة أوسع قليلاً مريحة جداً للقراءة والـ Costing */
-  border-bottom: 1px solid var(--border);
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
   color: var(--text-1);
-  transition: background 0.1s ease;
 }
-.table tbody tr:hover td { background: #fafafa; } /* تمييز ناعم للسطر بالكامل */
-.table .num { font-variant-numeric: tabular-nums; font-family: ui-monospace, monospace; font-weight: 500; }
+.table tbody tr:hover td { background: var(--surface-2); } /* تمييز حقيقي عند التمرير */
+.table .num { font-variant-numeric: tabular-nums; font-family: monospace; font-weight: 500; }
 
-/* ── الحالات والألوان ───────────────────────────────────────────── */
+/* ── 🏷️ BADGES & STATUSES ────────────────────────────────────── */
 .badge {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 500;
+  padding: 4px 12px; border-radius: 9999px; font-size: 11.5px; font-weight: 600;
 }
-.divider { height: 1px; background: var(--border); margin: 24px 0; }
+.badge-success { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-mid); }
+.badge-danger { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-mid); }
 
-/* ── الطباعة ───────────────────────────────────────────────────── */
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+
 @media print {
   .sidebar, .topbar, .no-print { display: none !important; }
-  body { background: white; color: black; font-size: 11px; }
-  .card { box-shadow: none; border: 1px solid #e4e4e7; }
+  body { background: white; color: black; }
+  .card { box-shadow: none; border: 1px solid #cbd5e1; }
 }
