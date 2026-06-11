@@ -3,24 +3,73 @@
 import React, { useMemo } from 'react'
 import { useAppStore } from '@/store/appStore'
 import { computeDashboardStats } from '@/lib/costingEngine'
-import { Package, Tags, Percent, ArrowUpRight, ArrowDownRight, Award, AlertTriangle } from 'lucide-react'
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import CategoryChart from './CategoryChart'
 
-const COLORS = ['#dc2626', '#ea580c', '#0284c7', '#16a34a', '#4f46e5']
+// التعديل السحري هنا: الـ Interface متظبطة بالملي زي ما الـ CategoryChart طالبها بالظبط!
+interface CategoryStat {
+  category: string   // الـ Chart طالبها category مش name
+  count: number
+  avgProfit: number
+}
+
+interface ProfitDistribution {
+  range: string
+  count: number
+}
+
+interface DashboardStats {
+  totalProducts: number
+  totalCategories: number
+  avgProfitability: number
+  categoriesAbove10Pct: number
+  categoriesBelow10Pct: number
+  highestProfitCategory: { category: string; count: number; avgProfit: number } | null
+  lowestProfitCategory: { category: string; count: number; avgProfit: number } | null
+  categoryBreakdown: CategoryStat[]
+  profitDistribution: ProfitDistribution[]
+}
 
 export default function Dashboard() {
   const { computedProducts, isLoaded } = useAppStore()
 
+  // عمل كاستنج للبيانات وتحويل الأسامي للـ Format اللي بيفهمه الـ CategoryChart
   const stats = useMemo(() => {
-    if (!isLoaded || !computedProducts.length) return null
-    return computeDashboardStats(computedProducts)
+    if (!isLoaded || !computedProducts || !computedProducts.length) return null
+    
+    const rawStats = computeDashboardStats(computedProducts) as any
+    
+    // هنا بنضمن إن كل الـ Breakdown والـ Highlights واخدين كلمة category بدل name عشان الـ TypeScript والـ Chart يرضوا عننا
+    const categoryBreakdown = (rawStats.categoryBreakdown || []).map((item: any) => ({
+      category: item.name || item.category || '',
+      count: item.count || 0,
+      avgProfit: item.avgProfit || 0
+    }))
+
+    return {
+      totalProducts: rawStats.totalProducts || 0,
+      totalCategories: rawStats.totalCategories || 0,
+      avgProfitability: rawStats.avgProfitability || 0,
+      categoriesAbove10Pct: rawStats.categoriesAbove10Pct || 0,
+      categoriesBelow10Pct: rawStats.categoriesBelow10Pct || 0,
+      highestProfitCategory: rawStats.highestProfitCategory ? {
+        category: rawStats.highestProfitCategory.name || rawStats.highestProfitCategory.category || '',
+        count: rawStats.highestProfitCategory.count || 0,
+        avgProfit: rawStats.highestProfitCategory.avgProfit || 0
+      } : null,
+      lowestProfitCategory: rawStats.lowestProfitCategory ? {
+        category: rawStats.lowestProfitCategory.name || rawStats.lowestProfitCategory.category || '',
+        count: rawStats.lowestProfitCategory.count || 0,
+        avgProfit: rawStats.lowestProfitCategory.avgProfit || 0
+      } : null,
+      categoryBreakdown,
+      profitDistribution: rawStats.profitDistribution || []
+    } as DashboardStats
   }, [computedProducts, isLoaded])
 
   if (!isLoaded || !stats) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-muted-foreground">Loading dashboard data...</p>
+      <div className="flex items-center justify-center h-full p-10">
+        <p className="text-slate-500 text-sm animate-pulse">Loading dashboard data...</p>
       </div>
     )
   }
@@ -28,60 +77,58 @@ export default function Dashboard() {
   const getMarginColorClass = (value: number) => {
     if (value >= 10) return 'text-green-600'
     if (value >= 0) return 'text-amber-600'
-    return 'text-destructive'
+    return 'text-red-600'
   }
 
+  // ألوان الـ Donut Chart
+  const COLORS = ['#dc2626', '#ea580c', '#0284c7', '#16a34a', '#4f46e5']
+
   return (
-    <div className="space-y-4">
-      {/* KPI Cards Row باستخدام Tailwind CSS صافي لحل مشكلة الـ Import */}
-      <div className="grid gap-4 md:grid-cols-5">
+    <div className="space-y-4 p-1 text-slate-800">
+      {/* KPI Cards Row */}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-5">
         
         {/* Total Products */}
-        <div className="rounded-xl border bg-card text-card-foreground shadow-sm bg-white">
-          <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-            <h3 className="text-xs font-bold tracking-wider text-muted-foreground uppercase">Total Products</h3>
-            <Package className="h-4 w-4 text-muted-foreground" />
+        <div className="rounded-xl border bg-white p-6 shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between pb-2">
+            <h3 className="text-xs font-bold tracking-wider text-slate-500 uppercase">Total Products</h3>
+            <span className="text-lg">📦</span>
           </div>
-          <div className="p-6 pt-0">
-            <div className="text-2xl font-bold tabular-nums">{stats.totalProducts}</div>
-          </div>
+          <div className="text-2xl font-bold tabular-nums text-slate-900">{stats.totalProducts}</div>
         </div>
 
         {/* Categories */}
-        <div className="rounded-xl border bg-card text-card-foreground shadow-sm bg-white">
-          <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-            <h3 className="text-xs font-bold tracking-wider text-muted-foreground uppercase">Categories</h3>
-            <Tags className="h-4 w-4 text-muted-foreground" />
+        <div className="rounded-xl border bg-white p-6 shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between pb-2">
+            <h3 className="text-xs font-bold tracking-wider text-slate-500 uppercase">Categories</h3>
+            <span className="text-lg">🏷️</span>
           </div>
-          <div className="p-6 pt-0">
-            <div className="text-2xl font-bold tabular-nums">{stats.totalCategories}</div>
-          </div>
+          <div className="text-2xl font-bold tabular-nums text-slate-900">{stats.totalCategories}</div>
         </div>
 
         {/* Avg. Net Margin */}
-        <div className="rounded-xl border bg-card text-card-foreground shadow-sm bg-white">
-          <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-            <h3 className="text-xs font-bold tracking-wider text-muted-foreground uppercase">Avg. Net Margin</h3>
-            <Percent className={`h-4 w-4 ${getMarginColorClass(stats.avgProfitability)}`} />
+        <div className="rounded-xl border bg-white p-6 shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between pb-2">
+            <h3 className="text-xs font-bold tracking-wider text-slate-500 uppercase">Avg. Net Margin</h3>
+            <span className="text-lg">📊</span>
           </div>
-          <div className="p-6 pt-0">
+          <div>
             <div className={`text-2xl font-bold tabular-nums ${getMarginColorClass(stats.avgProfitability)}`}>
               {stats.avgProfitability.toFixed(1)}%
             </div>
-            <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
-              <span className={`h-1.5 w-1.5 rounded-full bg-current ${getMarginColorClass(stats.avgProfitability)}`} />
+            <p className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
               of net sale price
             </p>
           </div>
         </div>
 
         {/* Categories >= 10% */}
-        <div className="rounded-xl border bg-card text-card-foreground shadow-sm bg-white">
-          <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-            <h3 className="text-xs font-bold tracking-wider text-muted-foreground uppercase">Categories ≥ 10%</h3>
-            <ArrowUpRight className="h-4 w-4 text-green-600" />
+        <div className="rounded-xl border bg-white p-6 shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between pb-2">
+            <h3 className="text-xs font-bold tracking-wider text-slate-500 uppercase">Categories ≥ 10%</h3>
+            <span className="text-sm text-green-600 font-bold">▲</span>
           </div>
-          <div className="p-6 pt-0">
+          <div>
             <div className="text-2xl font-bold text-green-600 tabular-nums">{stats.categoriesAbove10Pct}</div>
             <p className="text-[10px] text-green-600 font-medium mt-1">
               ↑ {stats.totalCategories > 0 ? Math.round((stats.categoriesAbove10Pct / stats.totalCategories) * 100) : 0}% of all
@@ -90,15 +137,14 @@ export default function Dashboard() {
         </div>
 
         {/* Categories < 10% */}
-        <div className="rounded-xl border bg-card text-card-foreground shadow-sm bg-white">
-          <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-            <h3 className="text-xs font-bold tracking-wider text-muted-foreground uppercase">Categories &lt; 10%</h3>
-            <ArrowDownRight className="h-4 w-4 text-destructive" />
+        <div className="rounded-xl border bg-white p-6 shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between pb-2">
+            <h3 className="text-xs font-bold tracking-wider text-slate-500 uppercase">Categories &lt; 10%</h3>
+            <span className="text-sm text-red-600 font-bold">▼</span>
           </div>
-          <div className="p-6 pt-0">
-            <div className="text-2xl font-bold text-destructive tabular-nums">{stats.categoriesBelow10Pct}</div>
-            <p className="text-[10px] text-destructive mt-1 flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-destructive" />
+          <div>
+            <div className="text-2xl font-bold text-red-600 tabular-nums">{stats.categoriesBelow10Pct}</div>
+            <p className="text-[10px] text-red-500 font-medium mt-1">
               Needs review
             </p>
           </div>
@@ -108,43 +154,39 @@ export default function Dashboard() {
       {/* Highlight Cards Row */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* Highest Profit Category */}
-        <div className="rounded-xl border bg-white text-card-foreground shadow-sm border-l-4 border-l-green-600 relative overflow-hidden">
-          <div className="p-6 flex items-center gap-4 pt-6">
-            <div className="p-2 rounded-md bg-green-50 text-green-600">
-              <Award className="h-5 w-5" />
-            </div>
-            <div className="flex-1">
-              <div className="text-[10px] font-bold text-green-600 tracking-wider uppercase mb-0.5">Highest Profit Category</div>
-              <div className="flex justify-between items-baseline">
-                <span className="text-sm font-semibold text-slate-800">
-                  {(stats.highestProfitCategory as any)?.name?.replace('فئة الصنف ', '').replace('فئة ', '') || 'N/A'}
-                </span>
-                <span className="text-sm font-bold text-green-600 tabular-nums">
-                  {((stats.highestProfitCategory as any)?.avgProfitPct ?? (stats.highestProfitCategory as any)?.avgProfit ?? 0).toFixed(1)}% 
-                  <span className="text-xs font-normal text-muted-foreground ml-1">margin</span>
-                </span>
-              </div>
+        <div className="rounded-xl border bg-white shadow-sm border-l-4 border-l-green-600 overflow-hidden p-6 flex items-center gap-4">
+          <div className="p-2.5 rounded-lg bg-green-50 text-green-600 text-xl font-bold">
+            🏆
+          </div>
+          <div className="flex-1">
+            <div className="text-[10px] font-bold text-green-600 tracking-wider uppercase mb-0.5">Highest Profit Category</div>
+            <div className="flex justify-between items-baseline">
+              <span className="text-sm font-semibold text-slate-800">
+                {stats.highestProfitCategory?.category?.replace('فئة الصنف ', '').replace('فئة ', '') || 'N/A'}
+              </span>
+              <span className="text-sm font-bold text-green-600 tabular-nums">
+                {(stats.highestProfitCategory?.avgProfit ?? 0).toFixed(1)}% 
+                <span className="text-xs font-normal text-slate-400 ml-1">margin</span>
+              </span>
             </div>
           </div>
         </div>
 
         {/* Lowest Profit Category */}
-        <div className="rounded-xl border bg-white text-card-foreground shadow-sm border-l-4 border-l-destructive relative overflow-hidden">
-          <div className="p-6 flex items-center gap-4 pt-6">
-            <div className="p-2 rounded-md bg-red-50 text-destructive">
-              <AlertTriangle className="h-5 w-5" />
-            </div>
-            <div className="flex-1">
-              <div className="text-[10px] font-bold text-destructive tracking-wider uppercase mb-0.5">Lowest Profit Category</div>
-              <div className="flex justify-between items-baseline">
-                <span className="text-sm font-semibold text-slate-800">
-                  {(stats.lowestProfitCategory as any)?.name?.replace('فئة الصنف ', '').replace('فئة ', '') || 'N/A'}
-                </span>
-                <span className="text-sm font-bold text-destructive tabular-nums">
-                  {((stats.lowestProfitCategory as any)?.avgProfitPct ?? (stats.lowestProfitCategory as any)?.avgProfit ?? 0).toFixed(1)}% 
-                  <span className="text-xs font-normal text-destructive ml-1">· Urgent Review</span>
-                </span>
-              </div>
+        <div className="rounded-xl border bg-white shadow-sm border-l-4 border-l-red-600 overflow-hidden p-6 flex items-center gap-4">
+          <div className="p-2.5 rounded-lg bg-red-50 text-red-600 text-xl font-bold">
+            ⚠️
+          </div>
+          <div className="flex-1">
+            <div className="text-[10px] font-bold text-red-600 tracking-wider uppercase mb-0.5">Lowest Profit Category</div>
+            <div className="flex justify-between items-baseline">
+              <span className="text-sm font-semibold text-slate-800">
+                {stats.lowestProfitCategory?.category?.replace('فئة الصنف ', '').replace('فئة ', '') || 'N/A'}
+              </span>
+              <span className="text-sm font-bold text-red-600 tabular-nums">
+                {(stats.lowestProfitCategory?.avgProfit ?? 0).toFixed(1)}% 
+                <span className="text-xs font-normal text-red-400 ml-1">· Urgent Review</span>
+              </span>
             </div>
           </div>
         </div>
@@ -153,58 +195,29 @@ export default function Dashboard() {
       {/* Charts Section */}
       <div className="grid gap-4 md:grid-cols-3">
         {/* Main Category Chart */}
-        <div className="rounded-xl border bg-white text-card-foreground shadow-sm md:col-span-2">
-          <div className="p-6 flex flex-col space-y-1.5">
-            <h3 className="text-xs font-bold tracking-wider text-muted-foreground uppercase border-b pb-2">
-              Average Net Margin by Category
-            </h3>
-          </div>
-          <div className="p-6 pt-0">
-            <CategoryChart data={stats.categoryBreakdown as any} />
-          </div>
+        <div className="rounded-xl border bg-white shadow-sm md:col-span-2 p-6">
+          <h3 className="text-xs font-bold tracking-wider text-slate-400 uppercase border-b pb-2 mb-4">
+            Average Net Margin by Category
+          </h3>
+          <CategoryChart data={stats.categoryBreakdown} />
         </div>
 
-        {/* Donut Chart Distribution */}
-        <div className="rounded-xl border bg-white text-card-foreground shadow-sm">
-          <div className="p-6 flex flex-col space-y-1.5">
-            <h3 className="text-xs font-bold tracking-wider text-muted-foreground uppercase border-b pb-2">
-              Margin Distribution
-            </h3>
-          </div>
-          <div className="p-6 pt-0 space-y-4">
-            <div className="h-[110px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={stats.profitDistribution}
-                    dataKey="count"
-                    nameKey="range"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={50}
-                    innerRadius={35}
-                  >
-                    {stats.profitDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', fontSize: '11px', borderRadius: '4px' }} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              {stats.profitDistribution.map((d, i) => (
-                <div key={i} className="flex items-center gap-2 text-xs p-1 rounded bg-slate-50 odd:bg-transparent">
-                  <span className="h-2 w-2 rounded-sm flex-shrink-0" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                  <span className="flex-1 text-slate-600 font-medium">{d.range}</span>
-                  <span className="font-bold text-slate-800 tabular-nums">{d.count}</span>
-                  <span className="text-muted-foreground text-[10px] w-8 text-right tabular-nums">
-                    {stats.totalProducts > 0 ? Math.round((d.count / stats.totalProducts) * 100) : 0}%
-                  </span>
-                </div>
-              ))}
-            </div>
+        {/* Margin Distribution List */}
+        <div className="rounded-xl border bg-white shadow-sm p-6">
+          <h3 className="text-xs font-bold tracking-wider text-slate-400 uppercase border-b pb-2 mb-4">
+            Margin Distribution
+          </h3>
+          <div className="flex flex-col gap-2">
+            {stats.profitDistribution.map((d, i) => (
+              <div key={i} className="flex items-center gap-2 text-xs p-2 rounded-lg bg-slate-50 border border-slate-100">
+                <span className="h-2.5 w-2.5 rounded-sm flex-shrink-0" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                <span className="flex-1 text-slate-600 font-medium">{d.range}</span>
+                <span className="font-bold text-slate-800 tabular-nums">{d.count}</span>
+                <span className="text-slate-400 text-[10px] w-8 text-right tabular-nums">
+                  {stats.totalProducts > 0 ? Math.round((d.count / stats.totalProducts) * 100) : 0}%
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
