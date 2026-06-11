@@ -2,28 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── 💎 PREMIUM SYSTEM TOKENS ─────────────────────────────────── */
+/* ── الـ Tokens بتحديث عصري احترافي ──────────────────────────────── */
 :root {
-  /* خلفية غاية في النقاء والهدوء */
-  --bg:          #fafafa; 
+  --bg:          #fafafa; /* خلفية فاتحة هادئة جداً على طريقة Vercel */
   --surface:     #ffffff;
-  /* درجات الرمادي الناعمة والمدروسة بدقة */
-  --surface-2:   #f4f4f5; 
+  --surface-2:   #f4f4f5; /* رمادي ناعم جداً للـ Hover والأسطح الثانوية */
   --surface-3:   #e4e4e7;
-  --border:      #e4e4e7; 
+  --border:      #e4e4e7; /* حدود ناعمة وغير حادة بصرياً */
   --border-2:    #d4d4d8;
   
-  /* طباعة متباينة للغاية ومريحة للعين (Typography) */
-  --text-1:      #09090b; /* أسود عميق للمحتوى الأساسي والبراند */
-  --text-2:      #52525b; /* رمادي متوازن للأرقام والعناوين الجانبية */
-  --text-3:      #71717a;
+  /* نصوص بتباين مريح جداً لمنع إجهاد العين */
+  --text-1:      #09090b; /* أسود عميق للنصوص الأساسية */
+  --text-2:      #52525b; /* رمادي متوازن للنصوص الثانوية */
+  --text-3:      #a1a1aa;
   
-  /* الأزرق الاحترافي الذكي (Modern Tech Blue) */
+  /* اللون الأزرق البراند (Modern Electric Blue) */
   --accent:      #2563eb; 
-  --accent-bg:   #f0f5ff;
+  --accent-bg:   #eff6ff;
   --accent-text: #1d4ed8;
   
-  /* لوحة ألوان دقيقة وعالية النقاء للمؤشرات المالية */
+  /* ألوان الحالات (نجاح، تحذير، خطر) بنقاء أعلى */
   --green:       #16a34a;
   --green-bg:    #f0fdf4;
   --green-mid:   #bbf7d0;
@@ -35,17 +33,16 @@
   --purple:      #7c3aed;
   --purple-bg:   #f5f3ff;
   
-  /* ظلال ناعمة خفيفة للغاية متعددة الطبقات تمنح عمقاً وارتفاعاً فخماً للكروت */
+  /* ظلال ناعمة متعددة الطبقات تعطي عمقاً فخماً للكروت */
   --shadow-sm:   0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md:   0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-  --shadow-lg:   0 10px 15px -3px rgba(0, 0, 0, 0.03), 0 4px 6px -2px rgba(0, 0, 0, 0.01);
+  --shadow-md:   0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg:   0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
   
-  --radius:      12px; /* انحناءات عصرية أنيقة ومتناسقة مع الـ Charts */
+  --radius:      12px; /* حواف دائرية مدروسة تتماشى مع العصر */
   --radius-sm:   8px;
-  --sidebar-w:   240px; /* زيادة عرض السايدبار لمنح مساحة تنفس للنصوص */
+  --sidebar-w:   240px; /* زيادة عرض السايدبار قليلاً ليعطي فخامة ومساحة للنصوص */
 }
 
-/* الوضع الليلي الفخم (Deep Dark Theme) */
 .dark {
   --bg:          #09090b;
   --surface:     #18181b;
@@ -71,7 +68,7 @@
   --purple-bg:   #2e1065;
 }
 
-/* ── 🕹️ BASE REGULATION ─────────────────────────────────────── */
+/* ── تحسينات عامة للهيكل ────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body {
@@ -84,7 +81,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* سكرول بار عصري ناعم مدمج لا يفسد شكل الجداول */
+/* سكرول بار مخفي وناعم لا يشوه التصميم */
 ::-webkit-scrollbar       { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 99px; }
@@ -96,7 +93,7 @@ html, body {
   overflow: hidden;
 }
 
-/* ── 🖥️ MINIMAL SIDEBAR ──────────────────────────────────────── */
+/* ── السايدبار الأنيق والمريح ───────────────────────────────────── */
 .sidebar {
   width: var(--sidebar-w);
   flex-shrink: 0;
@@ -110,12 +107,12 @@ html, body {
   z-index: 40;
 }
 .sidebar-logo {
-  padding: 24px 20px 20px;
+  padding: 24px 20px 18px; /* مساحة أكبر للتنفس */
   border-bottom: 1px solid var(--border);
 }
 .logo-mark {
   width: 36px; height: 36px;
-  background: var(--text-1); /* اللوجو بالأسود الصريح يعطي انطباع الـ High-End Brands */
+  background: var(--text-1); /* أسود ملكي يعطي طابع الـ Premium للبراند */
   border-radius: var(--radius-sm);
   display: flex; align-items: center; justify-content: center;
   color: var(--surface); font-weight: 700; font-size: 14px;
@@ -125,15 +122,15 @@ html, body {
   font-size: 15px; font-weight: 600;
   color: var(--text-1); letter-spacing: -0.3px;
 }
-.sidebar-nav { flex: 1; padding: 18px 12px; overflow-y: auto; }
+.sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
 .nav-group-label {
-  font-size: 10px; font-weight: 600; letter-spacing: .05em;
+  font-size: 10px; font-weight: 500; letter-spacing: .05em;
   color: var(--text-3); text-transform: uppercase;
   padding: 12px 12px 6px;
 }
 .nav-link {
   display: flex; align-items: center; gap: 10px;
-  padding: 8px 14px; border-radius: var(--radius-sm);
+  padding: 8px 12px; border-radius: var(--radius-sm);
   font-size: 13px; color: var(--text-2);
   cursor: pointer; text-decoration: none;
   transition: all 0.15s ease;
@@ -141,7 +138,7 @@ html, body {
 }
 .nav-link:hover { background: var(--surface-2); color: var(--text-1); }
 .nav-link.active {
-  background: var(--surface-2); /* تحديد هادئ بدلاً من الخلفية الفاقعة المزعجة للعين */
+  background: var(--surface-2); /* تداخل هادئ وراقي بدلاً من الفاقع */
   color: var(--text-1);
   font-weight: 600;
 }
@@ -154,7 +151,7 @@ html, body {
   background: var(--bg);
 }
 
-/* ── 🏛️ WORKSPACE HEADER & LAYOUT ────────────────────────────── */
+/* ── منطقة العمل العلوية والصفحات ───────────────────────────────── */
 .main-area { flex: 1; overflow: auto; min-width: 0; display: flex; flex-direction: column; }
 
 .topbar {
@@ -168,10 +165,9 @@ html, body {
 }
 .topbar-title { font-size: 16px; font-weight: 600; color: var(--text-1); letter-spacing: -0.2px; }
 
-/* الـ Padding هنا وسيع ومريح جداً يعطي فخامة فورية لكتل البيانات المرفوعة */
-.page-body { padding: 32px; flex: 1; overflow: auto; } 
+.page-body { padding: 32px; flex: 1; overflow: auto; } /* بايدنج ممتاز يعطي طابع فخم للمحتوى */
 
-/* ── 🎴 MODERN SLEEK CARDS ───────────────────────────────────── */
+/* ── الكروت بلمسة الـ Soft Shadow وعمق مريح ─────────────────────── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -184,13 +180,8 @@ html, body {
   box-shadow: var(--shadow-md);
   border-color: var(--border-2);
 }
-.card-title {
-  font-size: 11px; font-weight: 600; letter-spacing: .05em;
-  text-transform: uppercase; color: var(--text-3);
-  margin-bottom: 16px;
-}
 
-/* كروت الـ KPI المحدثة بالكامل لتبدو طافية ومريحة جداً */
+/* كروت الـ KPI الحيوية */
 .kpi-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -201,10 +192,10 @@ html, body {
   flex-direction: column;
   justify-content: space-between;
 }
-.kpi-val { font-size: 26px; font-weight: 700; color: var(--text-1); letter-spacing: -0.75px; line-height: 1.2; }
+.kpi-val { font-size: 26px; font-weight: 700; color: var(--text-1); letter-spacing: -0.75px; }
 .kpi-label { font-size: 12px; font-weight: 500; color: var(--text-2); }
 
-/* ── 🔘 PREMIUM FLAT BUTTONS ──────────────────────────────────── */
+/* ── الأزرار الحديثة والمسطحة الأنيقة ────────────────────────────── */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 8px 16px; border-radius: var(--radius-sm);
@@ -220,7 +211,7 @@ html, body {
 }
 .btn-ghost:hover { background: var(--surface-2); color: var(--text-1); border-color: var(--border-2); }
 
-/* ── 📊 FINANCIAL DATA TABLES (HIGHLY CAPABLE) ──────────────── */
+/* ── الجداول الاحترافية المريحة للبيانات الضخمة ────────────────── */
 .table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 .table th {
   background: var(--surface-2);
@@ -231,24 +222,22 @@ html, body {
   text-align: left;
 }
 .table td {
-  padding: 12px 16px; /* بادينج أوسع يمنح قراءة مريحة جداً لصفوف الـ Costing */
+  padding: 12px 16px; /* مسافة أوسع قليلاً مريحة جداً للقراءة والـ Costing */
   border-bottom: 1px solid var(--border);
   color: var(--text-1);
   transition: background 0.1s ease;
 }
-/* تمييز ناعم وراقي جداً للسطر عند مرور الماوس */
-.table tbody tr:hover td { background: #fafafa; } 
-/* جعل الأرقام المالية تصطف عمودياً بشكل رائع ومثالي */
-.table .num { font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, monospace; font-weight: 500; }
+.table tbody tr:hover td { background: #fafafa; } /* تمييز ناعم للسطر بالكامل */
+.table .num { font-variant-numeric: tabular-nums; font-family: ui-monospace, monospace; font-weight: 500; }
 
-/* ── 🏷️ STATUS BADGES & UTILITIES ────────────────────────────── */
+/* ── الحالات والألوان ───────────────────────────────────────────── */
 .badge {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 500;
 }
 .divider { height: 1px; background: var(--border); margin: 24px 0; }
 
-/* ── 🖨️ ADVANCED PRINT MODE ─────────────────────────────────── */
+/* ── الطباعة ───────────────────────────────────────────────────── */
 @media print {
   .sidebar, .topbar, .no-print { display: none !important; }
   body { background: white; color: black; font-size: 11px; }
