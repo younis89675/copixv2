@@ -5,7 +5,8 @@ import SettingsPanel from '@/components/settings/SettingsPanel'
 export default function SettingsPage() {
   return (
     <>
-      <Topbar title="Settings" subtitle="Configure costing parameters, discounts, and exchange rates" />
+      <Topbar title="Settings" breadcrumb="Settings"
+        subtitle="Configure costing parameters, category discounts, and exchange rates" />
       <div className="page-body">
         <SettingsPanel />
       </div>
