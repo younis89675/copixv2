@@ -77,7 +77,7 @@ export default function Quotation() {
   const totals = useMemo(() => {
     const revenue  = lines.reduce((s, l) => s + lineRev(l), 0)
     const cost     = lines.reduce((s, l) => s + lineCost(l), 0)
-    const total    = revenue + hdr.shippingCost
+    const total    = revenue - hdr.shippingCost
     const margin   = total - cost
     const marginPct = total > 0 ? (margin / total) * 100 : 0
     return { revenue, cost, total, margin, marginPct, shipping: hdr.shippingCost }
