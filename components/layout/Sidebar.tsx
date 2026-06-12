@@ -116,7 +116,7 @@ export default function Sidebar() {
       <div className="sidebar-footer">
         <div className="avatar">YA</div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div className="footer-name">Younis</div>
+          <div className="footer-name">costing team</div>
           <div className="footer-role">Administrator</div>
         </div>
         <LogOut size={13} style={{ color: 'rgba(255,255,255,.3)', cursor: 'pointer', flexShrink: 0 }} />
