@@ -78,8 +78,9 @@ export default function Quotation() {
     const revenue  = lines.reduce((s, l) => s + lineRev(l), 0)
     const cost     = lines.reduce((s, l) => s + lineCost(l), 0)
     const total    = revenue + hdr.shippingCost
-    const margin   = revenue - cost
+    const margin   = revenue - cost - hdr.shippingCost
     const marginPct = revenue > 0 ? (margin / revenue) * 100 : 0
+    console.log("New Margin Pct:", marginPct); // أضف هذا السطر
     return { revenue, cost, total, margin, marginPct, shipping: hdr.shippingCost }
   }, [lines, hdr.shippingCost])
 
